@@ -1,0 +1,6 @@
+/*
+ WooCommerce Reports Page
+ */
+.woocommerce_page_wc-reports ul.subsubsub li:nth-child(n+2) { display: none; }
+.woocommerce_page_wc-reports ul.subsubsub li:first-child { font-size: 0; }
+.woocommerce_page_wc-reports ul.subsubsub li a { font-size: 14px; }
