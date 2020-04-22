@@ -9,18 +9,18 @@ jQuery(function($) {
     }
 
     function isTokenizationEnabled()  {
-        return $("#monetary-token").length > 0;
+        return $("#datacap-token").length > 0;
     }
 
     function onProcess() {
-        var $isAddingNewCard = $("#wc-monetary-payment-token-new");
+        var $isAddingNewCard = $("#wc-datacap-payment-token-new");
 
         if (ignoreNextEvent === true) {
             ignoreNextEvent = false;
             return true;
         }
 
-        if (($addPaymentMethodForm.length > 0 || $isAddingNewCard.is(":checked")) && isTokenizationEnabled()) {
+        if (($addPaymentMethodForm.length > 0 || $isAddingNewCard.is(":checked") || $isAddingNewCard.length === 0) && isTokenizationEnabled()) {
             return tokenizeCard();
         }
 
@@ -28,10 +28,10 @@ jQuery(function($) {
     }
 
     function tokenizeCard() {
-        var $realCardNumber = $("#monetary-card-number"),
-            $realCvv = $("#monetary-card-cvc"),
-            $realCardExp = $("#monetary-card-expiry"),
-            $publicKey = $("#monetary-public-key"),
+        var $realCardNumber = $("#datacap-card-number"),
+            $realCvv = $("#datacap-card-cvc"),
+            $realCardExp = $("#datacap-card-expiry"),
+            $publicKey = $("#datacap-public-key"),
             $tokenCardNumber = $("input[data-token='card_number']"),
             $tokenCvv = $("input[data-token='cvv']"),
             $tokenExpMonth = $("input[data-token='exp_month']"),
@@ -50,6 +50,9 @@ jQuery(function($) {
         }
 
         if ($realCardNumber.val().length === 0 || $realCvv.val().length === 0 || $realCardExp.val().length === 0) {
+            var ts = getTimestamp();
+            $form.unblock().prepend('<ul class="woocommerce-error" id="datacap-error-' + ts + '"><li>Please complete all required payment fields.</li></ul>');
+            $("#datacap-error-" + ts).delay(4000).fadeOut("slow");
             return false;
         }
 
@@ -65,16 +68,16 @@ jQuery(function($) {
         $tokenExpYear.val('20' + enteredExpiry.substring(5));
         $tokenCvv.val($realCvv.val());
 
-        MonetaryWebToken.requestToken($publicKey.val(), "wc-monetary-cc-form", onTokenResponse);
+        DatacapWebToken.requestToken($publicKey.val(), "wc-datacap-cc-form", onTokenResponse);
         return false;
     }
 
     function onTokenResponse(response) {
-        var $monetaryToken = $('#monetary-token'),
-            $monetaryBrand = $('#monetary-brand'),
-            $monetaryExpMonth = $('#monetary-exp-month'),
-            $monetaryExpYear = $('#monetary-exp-year'),
-            $monetaryLast4 = $('#monetary-last-4'),
+        var $datacapToken = $('#datacap-token'),
+            $datacapBrand = $('#datacap-brand'),
+            $datacapExpMonth = $('#datacap-exp-month'),
+            $datacapExpYear = $('#datacap-exp-year'),
+            $datacapLast4 = $('#datacap-last-4'),
             error = '';
 
         if (response.Error) {
@@ -87,28 +90,28 @@ jQuery(function($) {
 
         if (error.length > 0) {
             var ts = getTimestamp();
-            $form.unblock().prepend('<ul class="woocommerce-error" id="monetary-error-' + ts + '"><li>' + error + '</li></ul>');
-            $("#monetary-error-" + ts).delay(4000).fadeOut("slow");
+            $form.unblock().prepend('<ul class="woocommerce-error" id="datacap-error-' + ts + '"><li>' + error + '</li></ul>');
+            $("#datacap-error-" + ts).delay(4000).fadeOut("slow");
             return;
         }
 
-        $monetaryToken.val(response.Token);
-        $monetaryBrand.val(response.Brand);
-        $monetaryExpMonth.val(response.ExpirationMonth);
-        $monetaryExpYear.val(response.ExpirationYear);
-        $monetaryLast4.val(response.Last4);
+        $datacapToken.val(response.Token);
+        $datacapBrand.val(response.Brand);
+        $datacapExpMonth.val(response.ExpirationMonth);
+        $datacapExpYear.val(response.ExpirationYear);
+        $datacapLast4.val(response.Last4);
 
         ignoreNextEvent = true;
         $form.submit();
     }
 
     function onUpdatedCheckout() {
-        $("#monetary-card-number, #monetary-card-expiry, #monetary-card-cvc").closest('.form-row').addClass('validate-required').removeClass('woocommerce-validated').trigger('change');
+        $("#datacap-card-number, #datacap-card-expiry, #datacap-card-cvc").closest('.form-row').addClass('validate-required').removeClass('woocommerce-validated').trigger('change');
     }
 
     if ($checkoutForm.length > 0) {
         $form = $checkoutForm;
-        $form.on('checkout_place_order_monetary', onProcess);
+        $form.on('checkout_place_order_datacap', onProcess);
         $(document.body).on('updated_checkout', onUpdatedCheckout);
         onUpdatedCheckout();
     }

@@ -1,8 +1,8 @@
 {
-	"name": "woocommerce-gateway-monetary",
-	"title": "WooCommerce plugin for the Monetary Payment Gateway",
+	"name": "woocommerce-gateway-datacap",
+	"title": "WooCommerce plugin for the Datacap Payment Gateway",
 	"version": "1.0.0",
-	"homepage": "https://monetary.co/",
+	"homepage": "https://dcap.com/",
 	"main": "Gruntfile.js",
 	"devDependencies": {
 		"grunt": "~0.4.5",
