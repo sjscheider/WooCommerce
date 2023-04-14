@@ -97,6 +97,7 @@ class WC_Datacap_Admin_Handler
         $is_captured = get_post_meta($order_id, WC_Datacap_Gateway::META_IS_CAPTURED, true);
         $card_token = get_post_meta($order_id, WC_Datacap_Gateway::META_DATACAP_CARD_TOKEN, true);
         $po_number = get_post_meta($order_id, WC_Datacap_Gateway::META_DATACAP_PO_NUMBER, true);
+        $invoice_number = get_post_meta($order_id, WC_Datacap_Gateway::META_INVOICE_NUMBER, true);
 
         if ($is_captured) {
             $order->add_order_note(__('This order has already been captured.', WC_DATACAP_MODULE_NAME));
@@ -113,6 +114,7 @@ class WC_Datacap_Admin_Handler
 
         $sale->setToken($card_token);
         $sale->setAmount($order->get_total());
+        $sale->setInvoiceNo($invoice_number);
 
         if ($this->config[WC_Datacap_Gateway::CONFIG_LEVEL_II_ENABLED] === 'yes') {
             $sale->setTax(number_format($order->get_cart_tax(), 2, '.', ''));

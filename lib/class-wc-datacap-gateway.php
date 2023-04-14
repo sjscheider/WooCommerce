@@ -21,6 +21,7 @@ class WC_Datacap_Gateway extends WC_Payment_Gateway_CC
 
     const META_TRANSACTION_ID = '_transaction_id';
     const META_IS_CAPTURED = '_is_captured';
+    const META_INVOICE_NUMBER = '_invoice_no';
     const META_DATACAP_CARD_TOKEN = '_datacap_card_token';
     const META_DATACAP_AUTH_CODE = '_datacap_auth_code';
     const META_DATACAP_PO_NUMBER = '_datacap_po_number';
@@ -549,6 +550,7 @@ class WC_Datacap_Gateway extends WC_Payment_Gateway_CC
         $order->update_meta_data(self::META_DATACAP_CARD_TOKEN, $response->getToken());
         $order->update_meta_data(self::META_DATACAP_AUTH_CODE, $response->getAuthCode());
         $order->update_meta_data(self::META_TRANSACTION_ID, $response->getRefNo());
+        $order->update_meta_data(self::META_INVOICE_NUMBER, $response->getInvoiceNo());
 
         if ($this->is_level_ii_enabled() && strlen($poNumber) > 0) {
             $order->update_meta_data(self::META_DATACAP_PO_NUMBER, $poNumber);
