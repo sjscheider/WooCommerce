@@ -26,7 +26,7 @@ if (!defined('WC_DATACAP_LANG_DIR')) {
 	define('WC_DATACAP_LANG_DIR', WC_DATACAP_PLUGIN_DIR . "/languages");
 }
 if (!defined('WC_DATACAP_VERSION')) {
-	define("WC_DATACAP_VERSION", "1.0.0");
+	define("WC_DATACAP_VERSION", "1.2.0");
 }
 if (!defined('WC_DATACAP_PAYMENT_METHOD_ID')) {
 	define("WC_DATACAP_PAYMENT_METHOD_ID", "datacap");
