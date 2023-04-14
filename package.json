@@ -1,7 +1,7 @@
 {
 	"name": "woocommerce-gateway-datacap",
 	"title": "WooCommerce plugin for the Datacap Payment Gateway",
-	"version": "1.0.0",
+	"version": "1.2.0",
 	"homepage": "https://dcap.com/",
 	"main": "Gruntfile.js",
 	"devDependencies": {
