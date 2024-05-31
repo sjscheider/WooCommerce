@@ -21,7 +21,6 @@ class WC_Datacap_Gateway extends WC_Payment_Gateway_CC
 
     const META_TRANSACTION_ID = '_transaction_id';
     const META_IS_CAPTURED = '_is_captured';
-    const META_INVOICE_NUMBER = '_invoice_no';
     const META_DATACAP_CARD_TOKEN = '_datacap_card_token';
     const META_DATACAP_AUTH_CODE = '_datacap_auth_code';
     const META_DATACAP_PO_NUMBER = '_datacap_po_number';
@@ -528,6 +527,7 @@ class WC_Datacap_Gateway extends WC_Payment_Gateway_CC
         $poNumber = $this->get_post_key($this->id . '_po_number') ?: '';
 
         $order = new WC_Order($order_id);
+        $order->add_meta_data(self::META_IS_CAPTURED, 0);
 
         if ($this->should_auth_and_capture()) {
             $response = $this->execute_sale_request($order);
@@ -549,8 +549,6 @@ class WC_Datacap_Gateway extends WC_Payment_Gateway_CC
          */
         $order->update_meta_data(self::META_DATACAP_CARD_TOKEN, $response->getToken());
         $order->update_meta_data(self::META_DATACAP_AUTH_CODE, $response->getAuthCode());
-        $order->update_meta_data(self::META_TRANSACTION_ID, $response->getRefNo());
-        $order->update_meta_data(self::META_INVOICE_NUMBER, $response->getInvoiceNo());
 
         if ($this->is_level_ii_enabled() && strlen($poNumber) > 0) {
             $order->update_meta_data(self::META_DATACAP_PO_NUMBER, $poNumber);
@@ -558,9 +556,8 @@ class WC_Datacap_Gateway extends WC_Payment_Gateway_CC
 
         if ($this->should_auth_and_capture()) {
             $order->payment_complete($response->getRefNo());
-            $order->update_meta_data(self::META_IS_CAPTURED, '1');
-            $order->add_order_note(sprintf(__('Charge complete (RefNo: %s)', WC_DATACAP_MODULE_NAME), $response->getRefNo()));
-            $order->save();
+            $order->update_meta_data(self::META_IS_CAPTURED, 1);
+            $order->add_order_note(sprintf('Charge complete (RefNo:%s)', WC_DATACAP_MODULE_NAME), $response->getRefNo());
         } else {
             if ($order->has_status(array('pending', 'failed'))) {
                 wc_reduce_stock_levels($order->get_id());
@@ -655,7 +652,7 @@ class WC_Datacap_Gateway extends WC_Payment_Gateway_CC
 
         $request->setAmount($order->get_total());
         $request->setZip($order->get_billing_postcode());
-        $request->setInvoiceNo($this->get_invoice_number($order)); // This worked, but not on captures
+        $request->setInvoiceNo(self::get_invoice_number($order));
 
         if ($this->is_level_ii_enabled() && $this->should_auth_and_capture()) {
             $this->setup_level_ii_request_parameters($request, $order);
@@ -734,8 +731,8 @@ class WC_Datacap_Gateway extends WC_Payment_Gateway_CC
     {
         $order = new WC_Order($order_id);
 
-        $transactionId = get_post_meta($order_id, self::META_TRANSACTION_ID, true);
-        $cardToken = get_post_meta($order_id, self::META_DATACAP_CARD_TOKEN, true);
+        $transactionId = $order->get_meta(self::META_TRANSACTION_ID, true);
+        $cardToken = $order->get_meta(self::META_DATACAP_CARD_TOKEN, true);
 
         if (!$cardToken) {
             return new WP_Error('datacap_refund_error', 'A refund is not possible because this order does not have a token assigned to it.');

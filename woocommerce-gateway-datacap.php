@@ -1,13 +1,13 @@
 <?php
 /*
  * Plugin Name: WooCommerce Datacap Payment Gateway
- * Version: 1.2
+ * Version: 1.3
  * Plugin URI: https://dcap.com/
  * Description: Accept payments via Datacap
  * Author: Datacap
  * Author URI: https://dcap.com/
  * WC requires at least: 3.0
- * WC tested up to: 7.5.1
+ * WC tested up to: 8.2.1
  *
  * Text Domain: woocommerce-gateway-datacap
  * Domain Path: /lang/
@@ -20,6 +20,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+add_action( 'before_woocommerce_init', function() {
+	if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+	}
+} );
+
 if (!defined('WC_DATACAP_MODULE_NAME')) {
 	define('WC_DATACAP_MODULE_NAME', 'woocommerce-gateway-datacap');
 }
@@ -30,7 +36,7 @@ if (!defined('WC_DATACAP_LANG_DIR')) {
 	define('WC_DATACAP_LANG_DIR', WC_DATACAP_PLUGIN_DIR . "/languages");
 }
 if (!defined('WC_DATACAP_VERSION')) {
-	define("WC_DATACAP_VERSION", "1.2.0");
+	define("WC_DATACAP_VERSION", "1.0.0");
 }
 if (!defined('WC_DATACAP_PAYMENT_METHOD_ID')) {
 	define("WC_DATACAP_PAYMENT_METHOD_ID", "datacap");
