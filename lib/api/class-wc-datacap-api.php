@@ -11,8 +11,8 @@ require_once(WC_DATACAP_PLUGIN_DIR . "/lib/api/class-wc-datacap-api-response.php
  */
 class WC_Datacap_API
 {
-    const CERT_ENDPOINT = 'https://pay-cert.dcap.com/v1';
-    const PROD_ENDPOINT = 'https://pay.dcap.com/v1';
+	const CERT_ENDPOINT = 'https://pay-cert.dcap.com/';
+    const PROD_ENDPOINT = 'https://pay.dcap.com/';
     const CERT_REPORTS_ENDPOINT = 'https://reporting-cert.dcap.com';
     const PROD_REPORTS_ENDPOINT = 'https://reporting.dcap.com';
 
@@ -41,6 +41,17 @@ class WC_Datacap_API
      */
     protected $secretKey;
 
+	/**
+	 * @var string
+	 */
+	protected $payApiVersion = 'v1';
+
+	/**
+	 * @var string
+	 */
+	protected $payApiv2Key = '';
+
+
     /**
      * @var string
      */
@@ -50,10 +61,10 @@ class WC_Datacap_API
      * @param bool $isSandbox
      * @return $this
      */
-    public function setIsSandbox($isSandbox)
+    public function setIsSandbox($isSandbox, $payApiVersion)
     {
         $this->isSandbox = $isSandbox;
-        $this->endpoint = $this->isSandbox ? self::CERT_ENDPOINT : self::PROD_ENDPOINT;
+        $this->endpoint = ($this->isSandbox ? self::CERT_ENDPOINT : self::PROD_ENDPOINT) . $payApiVersion;
         return $this;
     }
 
@@ -73,7 +84,23 @@ class WC_Datacap_API
         $this->secretKey = $key;
     }
 
-    /**
+	/**
+	 * @param string $version
+	 */
+	public function setPayApiVersion($version)
+	{
+		$this->payApiVersion = $version;
+	}
+
+	/**
+	 * @param string $key
+	 */
+	public function setPayApiV2Key($key)
+	{
+		$this->payApiv2Key = $key;
+	}
+
+	/**
      * @return string
      */
     public function getUserAgent()
@@ -114,8 +141,7 @@ class WC_Datacap_API
         if ($request instanceof WC_Datacap_API_Reports_Abstract) {
             return ($this->isSandbox ? self::CERT_REPORTS_ENDPOINT : self::PROD_REPORTS_ENDPOINT) . $request->getUri($params);
         }
-
-        return ($this->isSandbox ? self::CERT_ENDPOINT : self::PROD_ENDPOINT) . $request->getUri($params);
+	    return ($this->isSandbox ? self::CERT_ENDPOINT : self::PROD_ENDPOINT) . $this->payApiVersion . $request->getUri($params);
     }
 
     /**
@@ -145,7 +171,15 @@ class WC_Datacap_API
 
         $headers['Accept'] = $request::CONTENT_TYPE_JSON;
         $headers['Content-Type'] = $request::CONTENT_TYPE_JSON;
-        $headers['Authorization'] = $this->secretKey;
+		if ($this->payApiVersion === "v2") {
+			$authString = $this->secretKey . ':' . $this->payApiv2Key;
+			$headerValue = 'Basic ' . base64_encode($authString);
+			$headers['Authorization'] = $headerValue;
+		}
+		else {
+			$headers['Authorization'] = $this->secretKey;
+		}
+
         $headers['User-Agent'] = $this->getUserAgent();
 
         $curlOptions = array(

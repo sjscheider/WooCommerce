@@ -93,7 +93,9 @@ class WC_Datacap_Gateway_Entry
 
         self::$api->setPublicKey($pluginSettings['public_key']);
         self::$api->setSecretKey($pluginSettings['secret_key']);
-        self::$api->setIsSandbox($pluginSettings['sandbox_mode'] === "yes");
+	    self::$api->setPayApiV2Key($pluginSettings['pay_api_v2_key']);
+	    self::$api->setPayApiVersion($pluginSettings['pay_api_version']);
+        self::$api->setIsSandbox($pluginSettings['sandbox_mode'] === "yes", $pluginSettings['pay_api_version']);
 
         return self::$api;
     }

@@ -50,6 +50,23 @@ return apply_filters('wc_datacap_settings',
             'desc_tip'    => true,
         ),
 
+        WC_Datacap_Gateway::CONFIG_PAY_API_VERSION => array(
+            'title'       => __('PayAPI Version', WC_DATACAP_MODULE_NAME),
+            'type'        => 'select',
+            'description' => __('Select the PayAPI version you wish to use.'),
+            'options' => array(
+                WC_Datacap_Gateway::PAY_API_V1 => __('V1', WC_DATACAP_MODULE_NAME),
+                WC_Datacap_Gateway::PAY_API_V2 => __('V2', WC_DATACAP_MODULE_NAME)
+            )
+        ),
+
+        WC_Datacap_Gateway::CONFIG_PAY_API_KEY_V2 => array(
+            'title'       => __( 'Datacap PayAPI V2 Key', WC_DATACAP_MODULE_NAME ),
+            'type'        => 'password',
+            'description' => __( 'Your assigned Datacap PayAPI V2 Key', WC_DATACAP_MODULE_NAME ),
+            'desc_tip'    => true,
+        ),
+
         WC_Datacap_Gateway::CONFIG_SANDBOX_MODE => array(
             'title'       => __( 'Sandbox mode', WC_DATACAP_MODULE_NAME ),
             'label'       => __( 'Enable Sandbox Mode', WC_DATACAP_MODULE_NAME ),
@@ -58,8 +75,6 @@ return apply_filters('wc_datacap_settings',
             'default'     => 'yes',
             'desc_tip'    => true,
         ),
-
-
 
         'general' => array(
             'title'       => __( 'General', WC_DATACAP_MODULE_NAME ),

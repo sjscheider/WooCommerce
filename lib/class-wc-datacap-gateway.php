@@ -19,6 +19,9 @@ class WC_Datacap_Gateway extends WC_Payment_Gateway_CC
     const AUTH_THEN_CAPTURE = 'auth_then_capture';
     const AUTH_AND_CAPTURE = 'auth_and_capture';
 
+    const PAY_API_V1 = 'v1';
+    const PAY_API_V2 = 'v2';
+
     const META_TRANSACTION_ID = '_transaction_id';
     const META_IS_CAPTURED = '_is_captured';
     const META_DATACAP_CARD_TOKEN = '_datacap_card_token';
@@ -37,6 +40,8 @@ class WC_Datacap_Gateway extends WC_Payment_Gateway_CC
     const CONFIG_DESCRIPTION = 'description';
     const CONFIG_PUBLIC_KEY = 'public_key';
     const CONFIG_SECRET_KEY = 'secret_key';
+    const CONFIG_PAY_API_VERSION = 'pay_api_version';
+    const CONFIG_PAY_API_KEY_V2 = 'pay_api_v2_key';
     const CONFIG_SANDBOX_MODE = 'sandbox_mode';
     const CONFIG_TRANSACTION_TYPE = 'transaction_type';
     const CONFIG_ACCEPTED_CARD_TYPES = 'accepted_card_types';
